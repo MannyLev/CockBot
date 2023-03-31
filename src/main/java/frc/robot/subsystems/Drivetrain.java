@@ -4,26 +4,47 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.motorcontrol.Victor;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 public class Drivetrain extends SubsystemBase {
-  private WPI_VictorSPX frontRightMotor = new WPI_VictorSPX(19);
-  private WPI_VictorSPX backRightMotor = new WPI_VictorSPX(10);
-  private WPI_VictorSPX frontLeftMotor = new WPI_VictorSPX(17);
-  private WPI_VictorSPX backLeftMotor = new WPI_VictorSPX(11);
-  private MotorControllerGroup lefMotorControllerGroup;
+  private CANSparkMax frontRightMotor = new CANSparkMax(19, MotorType.kBrushless);
+  private CANSparkMax backRightMotor = new CANSparkMax(11, MotorType.kBrushless);
+  private CANSparkMax frontLeftMotor = new CANSparkMax(17, MotorType.kBrushless);
+  private CANSparkMax backLeftMotor = new CANSparkMax(10, MotorType.kBrushless);
+
+  private MotorControllerGroup leftMotorControllerGroup;
   private MotorControllerGroup rightMotorControllerGroup;
+private DifferentialDrive diffDrive;
+
+  private SlewRateLimiter throRateLimiter = new SlewRateLimiter(2);
+  private SlewRateLimiter turnRateLimiter = new SlewRateLimiter(2);
+  
   
   public Drivetrain() {
-    frontRightMotor.setInverted(false);
-    frontLeftMotor.setInverted(false);
-    backLeftMotor.setInverted(false);
-    backRightMotor.setInverted(false);
-    this.lefMotorControllerGroup = new MotorControllerGroup(backLeftMotor, frontLeftMotor);
+    this.frontRightMotor.setInverted(true);
+    this.frontLeftMotor.setInverted(false);
+    this.backLeftMotor.setInverted(false);
+    this.backRightMotor.setInverted(true);
+    
+    this.leftMotorControllerGroup = new MotorControllerGroup(backLeftMotor, frontLeftMotor);
     this.rightMotorControllerGroup = new MotorControllerGroup(backRightMotor, frontRightMotor);
+    this.diffDrive = new DifferentialDrive(leftMotorControllerGroup, rightMotorControllerGroup);
+  }
+
+  public void arcadeDrive(double throttle, double turn){
+    this.diffDrive.arcadeDrive(throRateLimiter.calculate(throttle), turnRateLimiter.calculate(turn));
+  }
+
+  public void initDefaultCommand(){
+
+  }
+
+  public void setMotorPwn(){
+    backLeftMotor.set(0.25);
   }
 }
