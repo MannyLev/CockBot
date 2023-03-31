@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public final class Auto1 extends SequentialCommandGroup {
   public Auto1(Drivetrain drivetrain){
     addCommands(
-    new ParallelRaceGroup(
-      new RunMotors(drivetrain, 0.75, 0),
-      new WaitCommand(1.5)
+      new ParallelRaceGroup(
+        new RunMotors(drivetrain, 0.75, 0),
+        new WaitCommand(1.5)
     )
 
   );

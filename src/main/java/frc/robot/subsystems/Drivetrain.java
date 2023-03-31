@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -12,14 +14,14 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 public class Drivetrain extends SubsystemBase {
-  private CANSparkMax frontRightMotor = new CANSparkMax(19, MotorType.kBrushless);
-  private CANSparkMax backRightMotor = new CANSparkMax(11, MotorType.kBrushless);
-  private CANSparkMax frontLeftMotor = new CANSparkMax(17, MotorType.kBrushless);
-  private CANSparkMax backLeftMotor = new CANSparkMax(10, MotorType.kBrushless);
+  private CANSparkMax frontRightMotor = new CANSparkMax(Constants.Drivetrain.kFrontRightPort, MotorType.kBrushless);
+  private CANSparkMax backRightMotor = new CANSparkMax(Constants.Drivetrain.kBackRightPort, MotorType.kBrushless);
+  private CANSparkMax frontLeftMotor = new CANSparkMax(Constants.Drivetrain.kFrontLeftPort, MotorType.kBrushless);
+  private CANSparkMax backLeftMotor = new CANSparkMax(Constants.Drivetrain.kBackLeftPort, MotorType.kBrushless);
 
   private MotorControllerGroup leftMotorControllerGroup;
   private MotorControllerGroup rightMotorControllerGroup;
-private DifferentialDrive diffDrive;
+  private DifferentialDrive diffDrive;
 
   private SlewRateLimiter throRateLimiter = new SlewRateLimiter(2);
   private SlewRateLimiter turnRateLimiter = new SlewRateLimiter(2);
@@ -30,7 +32,17 @@ private DifferentialDrive diffDrive;
     this.frontLeftMotor.setInverted(false);
     this.backLeftMotor.setInverted(false);
     this.backRightMotor.setInverted(true);
+
+    this.frontLeftMotor.setSmartCurrentLimit(40);
+    this.frontRightMotor.setSmartCurrentLimit(40);
+    this.backLeftMotor.setSmartCurrentLimit(40);
+    this.backRightMotor.setSmartCurrentLimit(40);
     
+    this.frontLeftMotor.enableVoltageCompensation(12);
+    this.frontRightMotor.enableVoltageCompensation(12);
+    this.backLeftMotor.enableVoltageCompensation(12);
+    this.backRightMotor.enableVoltageCompensation(12);
+
     this.leftMotorControllerGroup = new MotorControllerGroup(backLeftMotor, frontLeftMotor);
     this.rightMotorControllerGroup = new MotorControllerGroup(backRightMotor, frontRightMotor);
     this.diffDrive = new DifferentialDrive(leftMotorControllerGroup, rightMotorControllerGroup);
@@ -40,11 +52,11 @@ private DifferentialDrive diffDrive;
     this.diffDrive.arcadeDrive(throRateLimiter.calculate(throttle), turnRateLimiter.calculate(turn));
   }
 
-  public void initDefaultCommand(){
+  // public void initDefaultCommand(){
 
-  }
+  // }
 
-  public void setMotorPwn(){
-    backLeftMotor.set(0.25);
-  }
+  // public void setMotorPwn(){
+  //   backLeftMotor.set(0.25);
+  // }
 }
